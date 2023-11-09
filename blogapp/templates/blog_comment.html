@@ -1,0 +1,132 @@
+<!-- ベーステンプレートを適用する -->
+{% extends 'base5.html' %}
+<!-- ヘッダー情報のページタイトルを設定する -->
+{% block title %}BlogComment Detail{% endblock %}
+
+{% block content %}
+    <section class="mt-5">
+        <div class="card">
+        <div class="card-header">
+
+            {% if is_user_liked_for_blogpost %}
+            <button type="button" id="ajax-like-for-blogpost" style="border:none;background:none">
+                <!-- すでにイイねしている時はfasクラス -->
+                <i class="fas fa-heart text-danger" id="like-for-blogpost-icon"></i>
+            </button>
+            {% else %}
+            <button type="button" id="ajax-like-for-blogpost" style="border:none;background:none">
+                <!-- イイねしていないときはfarクラス -->
+                <i class="far fa-heart text-danger" id="like-for-blogpost-icon"></i>
+            </button>
+            {% endif %}
+            <!-- イイねの数 -->
+            <span id="like-for-blogpost-count">{{ like_for_blogpost_count }}</span>
+            <span>件のイイね</span>
+
+
+        </div>
+        <div class="card-body">
+            <div class="card-title">
+                <div class="container">
+                    <!-- 行を配置 -->
+                    <div class="row">
+                        <!-- 列の左右に余白offset-3を入れる -->
+                        <div class="col offset-3">
+                            <!-- タイトル -->
+            <h4>{{ blogcomment.writer }}</h4>
+            <!-- コメント -->
+            <p>{{ blogcomment.text | linebreaks | urlize }}</p>
+            <br>
+            <br>
+            <!-- 投稿日時 -->
+            <p>{{ blogcomment.created_at }}に投稿</p>
+                            <!-- 投稿写真がログイン中のユーザーのものであれば削除ボタンを表示 -->
+                            <!-- リンク先のURL
+                                photo/<photo postsテーブルのid値>/delete/-->
+                            <a href="{% url 'blogapp:blogcomment_delete' blogcomment.pk %}"
+                                class="btn btn-primary my-2">削除する</a>
+                            <a href="{% url 'blogapp:blogapp_update' object.pk %}"
+                                class="btn btn-primary my-2">編集する</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'blogapp:blogcomment_create' object.pk %}"
+                                class="btn btn-primary my-2">コメントする</a>
+
+                <hr>
+                <h3 class="blogcomment-title">コメント</h3>
+                <br>
+                <!--コメント-->
+                {% for blogcomment in object.blogcomment_set.all %}
+                <div class="blogcomment-list">
+                    <div class='border-bottom'><a href="{% url 'blogapp:blogcomment_detail' blogcomment.pk %}">{{ blogcomment.writer }}</a>
+                    {{ blogcomment.created_at }}</div>
+                    <!--改行しないようlinebreaksを設定,URL要素に<a>要素を設定-->
+                    <div class='mt-2'>{{ blogcomment.text | linebreaks | urlize }}</div>
+                </div>
+                {% empty %}
+                <p>コメントはありません</p>
+                {% endfor %}
+
+            {% comment %} <h2>#{{ photopost.pk }} {{ photopost.title }}</h2>
+            </div>
+            <div class="card-text">
+            <span class="fs-6">{{ photopost.created_at | date:'Y-m-d'}}</span>
+            <p class="fs-6">{{ photopost.writer }}</p>
+            <div class="mt-5">
+                {{ post.text }} {% endcomment %}
+            </div>
+        </div>
+        </div>
+        </div>
+    </section>
+{% endblock %}
+
+
+
+
+    {% block contents %}
+    <!-- Bootstrapのグリッドシステム -->
+    <br>
+
+    {% endblock %}
+
+
+{% block extrajs %}
+<script type="text/javascript">
+    /* ポストに対するイイね */
+    document.getElementById('ajax-like-for-blogpost').addEventListener('click', e => {
+        e.preventDefault();
+        const url = '{% url "blogapp:like_for_blogpost" %}';
+        fetch(url, {
+            method: 'POST',
+            body: `blogpost_pk={{blogpost.pk}}`,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+    }).then(response => {
+        return response.json();
+    }).then(response => {
+        // イイね数を書き換える
+        const counter = document.getElementById('like-for-blogpost-count')
+        counter.textContent = response.like_for_blogpost_count
+        const icon = document.getElementById('like-for-blogpost-icon')
+        // 作成した場合はハートを塗る
+        if (response.method == 'create') {
+            icon.classList.remove('far')
+            icon.classList.add('fas')
+            icon.id = 'like-for-blogpost-icon'
+        } else {
+            icon.classList.remove('fas')
+            icon.classList.add('far')
+            icon.id = 'like-for-blogpost-icon'
+        }
+    }).catch(error => {
+        console.log(error);
+    });
+});
+</script>
+{% endblock %}
+            
+

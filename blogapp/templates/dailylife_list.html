@@ -1,0 +1,112 @@
+<!-- ①<!DOCTYPE html> <html lang="ja">を削除 -->
+
+<!-- ②ベーステンプレートを適用する -->
+{% extends "base2.html" %}
+<!-- 静的ファイルのURLを生成するstaticタグをロードする -->
+{% load static %}
+
+<!-- ③ヘッダー情報のページタイトルは
+ベーステンプレートを利用するページで設定する -->
+{% block title %}Django's Blog - Dailylife{% endblock %}
+
+<!-- ①<head>~</head>を削除 -->
+<!-- ①<body>とコメントNavigation以下の<nav>~</nav>を削除 -->
+    <!-- Navigation -->
+
+<!-- Page Header-->
+<!-- ④<header>~</header>をテンプレートタグで囲む -->
+{% block header %}
+<!--ヘッダーの背景イメージのリンク先url()の引数をstaticタグに書き換え-->
+<header class="masthead" style="background-image: url({% static "assets/img/home-bg.jpg" %})">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <!--ヘッダーの大見出し（タイトル）を設定-->
+                    <h1>Django's Blog</h1>
+                    <!-- サブタイトルを変更 -->
+                    <span class="subheading">Dailylifeカテゴリの記事一覧</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- ④<header>~</header>をテンプレートタグで囲む -->
+{% endblock %}
+<!-- Main Content-->
+<!---->
+{% block contents %}
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+            <!--
+            レコードが格納されたdailylife_recordsから
+            レコードを1行ずつrecordに取り出す
+            -->
+            {% for record in dailylife_records %}
+            <!-- Post preview-->
+            <div class="post-preview">
+                <!--
+                urlでURLパターン'blog-detail/<int:pk>/'を生成し、
+                詳細ページへのリンクを設定
+                -->
+                <a href="{% url "blogapp:blog_detail" record.pk %}">
+                    <!-- 記事のタイトル -->
+                    <h2 class="post-title">
+                        <!-- titleフィールドを出力 -->
+                        {{record.title}}
+                    </h2>
+                    <!-- 投稿記事の本文 -->
+                    <h3 class="post-subtitle">
+                        <!-- サブタイトルの文字サイズを14ptにする -->
+                        <span style="font-size : 14pt">
+                            <!--
+                            content フィールドを出力
+                            truncatecharsで出力する文字数を50以内に制限
+                            -->
+                            {{record.content|truncatechars:50}}
+                        </span>
+                    <h3/>
+                </a>
+                <!-- 投稿日時とカテゴリ -->
+                <p class="post-meta">
+                <span style="font-size : 14pt">
+                    <!-- ページの最上部にリンクする -->
+                    <a href="#">Django's Blog</a>
+                    <!-- posted_at フィールドを出力 -->
+                    {{record.posted_at}}に投稿/カテゴリ:
+
+                    <!-- category フィールドを出力 -->
+                    {{record.category}}
+                </p>
+            </div>
+
+            <!-- Divider -->
+            <hr class="my-4" />
+
+            <!-- for -->
+            {% endfor %}
+
+
+            <!-- Post preview -->
+                <!-- コード削除 -->
+            <!-- Divider -->
+                <!-- コード削除 -->
+
+            <!-- Post preview -->
+                <!-- コード削除 -->
+            <!-- Divider -->
+                <!-- コード削除 -->
+
+            <!-- Post preview -->
+                <!-- コード削除 -->
+            <!-- Divider -->
+                <!-- コード削除 -->
+
+            <!-- Pager-->
+            <!-- ページネーションが組み込まれたテンプレートの読み込み -->
+            {% include "pagination.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}

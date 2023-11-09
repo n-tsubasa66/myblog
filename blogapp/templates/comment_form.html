@@ -1,0 +1,34 @@
+<!-- ベーステンプレートを適用する -->
+{% extends 'base5.html' %}
+
+{% block title %}Blog Detail{% endblock %}
+
+{% block contents %}
+<section class="mt-5">
+  <div class="card">
+  <div class="card-header">
+
+<div class="container col-lg-6 offset-lg-3">
+  <h1 class="titleline">{{ blogpost.title }}</h1>
+  <p class="subheading">{{ blogpost.content|truncatechars:30}}</p>
+
+  <hr>
+  <form action="" method="POST" id="blogcomment-form">
+    <table>
+        <tr>
+            <th>名前:&nbsp;</th>
+            <td>{{ form.writer }}</td>
+        </tr>
+        <tr>
+            <th>本文:</th>
+            <td>{{ form.text }}</td>
+        </tr>
+    </table>
+    {% csrf_token %}
+    <div class="row my-3">
+      <button type="submit" class="btn btn-success col-3 offset-2">投稿する</button>
+      <a class="btn btn-danger col-3 offset-2" href="{% url 'blogapp:blog_detail' blogpost.pk %}">キャンセル</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

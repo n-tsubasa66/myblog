@@ -1,0 +1,100 @@
+<!-- <!DOCTYPE html> <html lang="en"> <head>~</head>まで削除 -->
+<!-- <body>とNavigation以下のブロック<nav>~</nav>まで削除 -->
+
+<!-- ベーステンプレートを適用する -->
+{% extends 'base2.html' %}
+<!--
+静的ファイルのURLを生成するstaticは
+個々のページで読み込むことが必要
+-->
+{% load static %}
+<!-- ヘッダー情報のページタイトルは
+ベーステンプレートを利用するページで設定する -->
+{% block title %}Django's Blog - Contact{% endblock %}
+
+    <!-- Page Header-->
+    <!-- ページのヘッダーはベーステンプレートを利用するページで設定する -->
+    {% block header %}
+    <!-- ヘッダーの背景イメージはリンク先のurl()の引数をstaticタグに書き換え -->
+    <header class="masthead" style="background-image: url({% static 'assets/img/contact-bg.jpg' %})">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="page-heading">
+                        <!-- ヘッダーの大見出し(タイトル)変更 -->
+                        <h1>Contact Me</h1>
+                        <!-- サブタイトルを変更 -->
+                        <span class="subheading">Have questions? I have answers.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    {% endblock %}
+
+    <!-- Main Content-->
+    <!-- ページのコンテンツはベーステンプレートを利用するページで設定する -->
+    {% block contents %}
+    <main class="mb-4">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <!-- 本文を変更 -->
+                    <strong>連絡を取りたいですか？
+                            以下のフォームに記入してメッセージを送信してください。
+                            できるだけ早くご連絡します。</strong>
+
+                    <!-- フォームの送信が成功したときのメッセージを表示するためのコード -->
+                    <!-- requestにmessageオブジェクトが存在している場合 -->
+                    {% if messages %}
+                    <!-- 箇条書きのスタイルを無効にした<ul>タグでメッセージを出力 -->
+                    <ul class="list-unstyled" style="list-style: none;">
+                        <!-- forでmessagesを取り出す -->
+                        {% for message in messages %}
+                        <!-- message.tagsが存在する場合はclass属性にCSSのクラスを設定 -->
+                        <li {%if message.tags %} class="{{ message.tags }}" {% endif %}>
+                            <!-- messageに格納されているメッセージを出力 -->
+                            {{ message }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+
+                    <!-- 以下、フォームを表示するためのコード -->
+                    <div class="my-5">
+                        <!-- method="post"を追加 -->
+                        <form method="post" >
+                            <!-- CSRF対策のためのテンプレートタグ -->
+                            {% csrf_token %}
+                            <!-- formで定義されているフィールドの値を取り出す -->
+                            {% for field in form %}
+                                <div class="form-floating">
+                                    <div class="form-group floating-label-form-group controls">
+                                        <!---->
+                                        {{ field.label_tag}}
+                                        <!---->
+                                        {{ field }}
+                                        <!---->
+                                        <p class="help-block text-danger"></p>
+                                        <!---->
+                                        <!---->
+                                    </div>
+                                </div>
+                            <!---->
+                            {% endfor %}
+
+                            <!---->
+
+                            <br>
+                            <!---->
+                            <button type="submit"
+                                    class="btn btn-primary"
+                                    id="sendMessageButton">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    {% endblock %}
+        <!-- Footer-->
